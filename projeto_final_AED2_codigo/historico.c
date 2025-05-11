@@ -18,11 +18,25 @@ Pilha* abrirHistorico(){
 }
 
 void imprimirHistorico(Pilha *h){
+    foguete *atual = h->topo;
 
+    while(atual != NULL) {
+        printf("Modelo: %s ", atual->modelo);
+        printf("ID: %s ", atual->ID);
+        printf("Destino: %s ", atual->localizacao);
+        printf("Horario: %s ", atual->horario);
+        atual = atual->proximo;
+    }
 }
- 
+//em ajuste
 void removerHistorico(Pilha *h){
+    if(h->topo == NULL) return -1;
 
+    foguete* removido = h->topo;
+    int valor = removido->horario;
+    h->topo = removido->proximo;
+    free(removido);
+    return valor;
 }
 
 void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[], char modelo[]){
