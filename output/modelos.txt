@@ -1,0 +1,3 @@
+ModeloTeste1;10
+Falcon9;200
+Starship;1000
