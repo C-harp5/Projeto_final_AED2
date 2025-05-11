@@ -5,7 +5,7 @@
 typedef struct Destinos Destinos;
 typedef struct Historico Historico;
 typedef struct Decolagens Decolagens;
-typedef struct Lista Lista;
+typedef struct Lista Lista; 
 typedef struct Fila Fila;
 
 // Parte dos destinos
@@ -15,6 +15,7 @@ void removerDestino(Lista *d, const char destinoExistente[]); // Remove o destin
 void adicionarDestino(Lista *d, const char destinoNovo[]); // Adiciona o destino novo dentro do arquivo
 void fecharLista(Lista *d); //Uma função para salvar o arquivo novo e dar um fclose()
 void salvarDestinos(Lista *d);
+int verificarDestino(Lista *d, const char destinoExistente[]);
 //------------------------------------------------------------------
 // Parte de Decolagens
 Fila* abrirDecolagens(); //Abre o arquivo com a fila de decolagem;

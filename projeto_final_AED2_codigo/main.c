@@ -20,12 +20,12 @@ char menu() {
     char opcao;
     
     printf("\n=== Menu de Controle ===");
-    printf("\n1 - Cadastro de foguetes");
-    printf("\n2 - Lista de foguetes");
-    printf("\n3 - Remover foguete");
+    printf("\n1 - Cadastro de foguetes para decolagem");
+    printf("\n2 - Lista de foguetes para decolagem");
+    printf("\n3 - Remover foguete da lista de decolagens");
     printf("\n4 - Lista de destinos");
     printf("\n5 - Remover destino");
-    printf("\n6 - Decolagem");
+    printf("\n6 - Decolar foguete");
     printf("\n7 - Historico de decolagens");
     printf("\n8 - Adicionar destinos");
     printf("\n9 - Sair");
@@ -108,16 +108,26 @@ int main() {
                 
 
                 printf("\n--- Horario formatação [00:00]: ");
-                fgets(tempHorario, sizeof(tempHorario), stdin);
+                fgets(tempHorario, sizeof(tempHorario), stdin); 
                 limpar_str(tempHorario);
 
                 printf("\n--- Id: ");
                 fgets(tempID, sizeof(tempID), stdin);
                 limpar_str(tempID);
 
-                printf("\n--- Destino: ");
-                fgets(tempDestino, sizeof(tempDestino), stdin);
-                limpar_str(tempDestino);
+                do
+                {
+                    printf("\n--- Destino: ");
+                    fgets(tempDestino, sizeof(tempDestino), stdin);
+                    limpar_str(tempDestino);
+
+                    if(verificarDestino(listaDestinos, tempDestino) == 0){
+                        printf("Insira novamente\n");
+                        system("pause");
+                        continue;
+                    }
+                    break;
+                } while (1);
 
                 adicionarDecolagem(filaDecolagem, tempHorario, tempModelo, tempCapacidade, tempID, tempDestino);
                 printf("\nDecolagem adicionada!");

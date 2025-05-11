@@ -15,7 +15,7 @@ typedef struct Lista {
 Lista* abrirDestinos() { 
     FILE *fp = fopen("destinos.csv", "r");
     if(fp == NULL) {
-        printf("Erro ao abrir arquivo!\n");
+        printf("Erro ao abrir arquivo!\n"); 
         return NULL;
     }
 
@@ -116,4 +116,26 @@ void fecharLista(Lista *d) {
         free(temp);
     }
     free(d);
+}
+
+int verificarDestino(Lista *d, const char destinoExistente[]) {
+    Destinos *atual = d->inicio;
+    Destinos *anterior = NULL;
+
+    while(atual != NULL) {
+        if(strcmp(atual->localizacao, destinoExistente) == 0) {
+            if(anterior == NULL) {
+                // Remove o primeiro nó da lista
+                d->inicio = atual->proximo;
+            } else {
+                // Ajusta o ponteiro do nó anterior
+                anterior->proximo = atual->proximo;
+            }
+            free(atual);
+            return 1;
+        }
+        anterior = atual;
+        atual = atual->proximo;
+    }
+    return 0;
 }
