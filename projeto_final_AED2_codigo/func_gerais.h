@@ -7,6 +7,7 @@ typedef struct Historico Historico;
 typedef struct Decolagens Decolagens;
 typedef struct Lista Lista; 
 typedef struct Fila Fila;
+typedef struct Pilha Pilha;
 
 // Parte dos destinos
 Lista* abrirDestinos(); //Abre o arquivo com a lista de destino
@@ -27,11 +28,12 @@ void removerDecolagem(Fila *decolagemExistente, const char id[]);//Remove um voo
 void fecharFila(Fila *d);
 //------------------------------------------------------------------
 //Parte do histórico
-Historico* abrirHistorico(); //Abre o arquivo de histórico
-void imprimirHistorico(Historico *historico); //Imprime o arquivo de histórico
-void removerHistorico(Historico *historico);//Remove o histórico
-void adicionarHistorico(Historico *historico);//Põe no historico
-void fecharHistorico(); //fecha o arquivo
+Pilha* abrirHistorico(); //Abre o arquivo de histórico
+void imprimirHistorico(Pilha *h); //Imprime o arquivo de histórico
+void removerHistorico(Pilha *h);//Remove o histórico
+void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[], char modelo[]);//Põe no historico
+void fecharHistorico(Pilha *h); //fecha o arquivo
+void salvarHistorico(Pilha *p);
 //------------------------------------------------------------------
 
 #endif
