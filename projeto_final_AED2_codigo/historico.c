@@ -10,7 +10,7 @@ Historico* abrirHistorico(){
 void imprimirHistorico(Historico *historico){
 
 }
-
+ 
 void removerHistorico(Historico *historico){
 
 }
