@@ -368,11 +368,12 @@ void decolagem(Fila *fila) {
 
     // Libera memória do elemento removido
     free(primeiro);
+    
     //Pra ficar bonito
     for(int i = 5; i >= 0; i--)
     {
-        sleep(1);
         printf("%d segundo(s)", i);
+        sleep(1);
         system("cls");
     }
     printf("\nDecolagem realizada! Um grande passo para o futuro!.\n");
