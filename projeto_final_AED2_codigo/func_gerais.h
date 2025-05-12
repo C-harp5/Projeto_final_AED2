@@ -1,22 +1,19 @@
 #ifndef FUNC_GERAIS_H
 #define FUNC_GERAIS_H
 
-
-typedef struct Destinos Destinos;
-typedef struct Historico Historico;
-typedef struct Decolagens Decolagens;
 typedef struct Lista Lista; 
 typedef struct Fila Fila;
 typedef struct Pilha Pilha;
 
 // Parte dos destinos
 Lista* abrirDestinos(); //Abre o arquivo com a lista de destino
+char verificarModelo(const char modelo[], const char capacidade_fornecida_str[]);//Verifica o modelo utilizado
+int verificarDestino(Lista *d, const char destinoExistente[]);//checa se o destino existe no arquivo destino.txt
 void imprimirDestinos(Lista *d); //Imprime o arquivo com a lista de destino
 void removerDestino(Lista *d, const char destinoExistente[]); // Remove o destino de dentro do arquivo
 void adicionarDestino(Lista *d, const char destinoNovo[]); // Adiciona o destino novo dentro do arquivo
 void fecharLista(Lista *d); //Uma função para salvar o arquivo novo e dar um fclose()
 void salvarDestinos(Lista *d);
-int verificarDestino(Lista *d, const char destinoExistente[]);
 //------------------------------------------------------------------
 // Parte de Decolagens
 Fila* abrirDecolagens(); //Abre o arquivo com a fila de decolagem;

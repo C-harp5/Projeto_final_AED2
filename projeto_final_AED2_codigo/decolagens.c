@@ -66,7 +66,6 @@ char verificarModelo(const char modelo[], const char capacidade_fornecida_str[])
     return '2'; // Modelo não encontrado
 }
 
-
 //Função para conversão do horario
 int converterHorarioParaMinutos(const char *horario) {
     int h, m;
@@ -224,8 +223,12 @@ void adicionarDecolagem(Fila *decolagemNova, const char horario[], const char mo
         return;
     }
 
-    fprintf(fp, "%s%s;%s;%s;%s;%s",
-        (ftell(fp) == 0) ? "" : "\n", // Adiciona \n apenas se o arquivo não estiver vazio
+    // Adiciona \n antes do novo registro (exceto se o arquivo estiver vazio)
+    if (ftell(fp) != 0) {
+        fprintf(fp, "\n");
+    }
+
+    fprintf(fp, "%s;%s;%s;%s;%s\n",
         localDestino,
         horario,
         idAeronave,
@@ -323,9 +326,10 @@ void decolagem(Fila *fila) {
 
     // Passo 1: Remove da memória
     Decolagens *primeiro = fila->inicio;
+    char idRemovido[10];
+    strncpy(idRemovido, primeiro->ID, sizeof(idRemovido));
     fila->inicio = fila->inicio->proximo;
-    
-    // Atualiza o fim se a fila ficar vazia
+
     if (fila->inicio == NULL) {
         fila->fim = NULL;
     }
@@ -334,11 +338,10 @@ void decolagem(Fila *fila) {
     FILE *arquivo = fopen("decolagens.csv", "r");
     if (arquivo == NULL) {
         printf("Erro ao abrir arquivo!\n");
-        free(primeiro); // Libera memória mesmo com erro
+        free(primeiro);
         return;
     }
 
-    // Cria um arquivo temporário
     FILE *temp = fopen("temp.csv", "w");
     if (temp == NULL) {
         printf("Erro ao criar arquivo temporário!\n");
@@ -348,72 +351,41 @@ void decolagem(Fila *fila) {
     }
 
     char linha[200];
-    int linhaRemovida = 0; // Flag para pular a primeira linha
+    int primeiraLinha = 1;
 
-    // Copia todas as linhas, exceto a primeira
+    // Copia todas as linhas, exceto a que tem o ID removido
     while (fgets(linha, sizeof(linha), arquivo) != NULL) {
-        if (linhaRemovida) {
+        char idAtual[10];
+        sscanf(linha, "%*[^;];%*[^;];%9[^;]", idAtual);
+
+        if (strcmp(idAtual, idRemovido) != 0) {
+            if (primeiraLinha) {
+                primeiraLinha = 0;
+            } else {
+                fprintf(temp, "\n");
+            }
             fprintf(temp, "%s", linha);
-        } else {
-            linhaRemovida = 1; // Pula a primeira linha
         }
     }
 
     fclose(arquivo);
     fclose(temp);
 
-    // Substitui o arquivo original
     remove("decolagens.csv");
     rename("temp.csv", "decolagens.csv");
 
-    // Libera memória do elemento removido
     free(primeiro);
-    
-    //Pra ficar bonito
-    for(int i = 5; i >= 0; i--)
-    {
-        printf("%d segundo(s)", i);
+    for(int i = 5; i >= 0; i--) {
         sleep(1);
-        system("cls");
+        printf("%d segundo(s)\n", i);
     }
-    printf("\nDecolagem realizada! Um grande passo para o futuro!.\n");
+    printf("\nDecolagem realizada! Um grande passo para o futuro!\n");
 }
 
 void fecharFila(Fila *fila) {
     if (fila == NULL) return;
-
-    // Passo 1: Salvar os dados no arquivo CSV
-    FILE *fp = fopen("decolagens.csv", "w");
-    if (fp == NULL) {
-        printf("Erro ao abrir o arquivo para salvar dados!\n");
-        return;
-    }
-
     Decolagens *atual = fila->inicio;
-    int primeiraLinha = 1; // Flag para evitar linha vazia no final
-
-    while (atual != NULL) {
-        // Formato: localizacao;horario;ID;capacidade;modelo
-        if (primeiraLinha) {
-            primeiraLinha = 0;
-        } else {
-            fprintf(fp, "\n"); // Quebra de linha apenas entre registros
-        }
-
-        fprintf(fp, "%s;%s;%s;%s;%s",
-            atual->localizacao,
-            atual->horario,
-            atual->ID,
-            atual->foguete.capacidade,
-            atual->foguete.modelo
-        );
-
-        atual = atual->proximo;
-    }
-
-    fclose(fp);
-
-    // Passo 2: Liberar a memória da fila
+    // Passo 1: Liberar a memória da fila
     atual = fila->inicio;
     while (atual != NULL) {
         Decolagens *proximo = atual->proximo;
