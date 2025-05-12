@@ -1,21 +1,23 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "func_gerais.h"
 
-typedef struct Foguete{
-    char quantidade[6];
-    char ID[10];
-    char modelo[20];
-    char horario[6];
-    char localizacao[40];
-    struct Elemento* anterior;
-}Foguete;
+// Struct corrigida com ordem de campos igual ao CSV e tipo de ponteiro consistente
+typedef struct Foguete {
+    char horario[6];        // Campo 1 do CSV
+    char ID[10];            // Campo 2 do CSV
+    char localizacao[40];   // Campo 3 do CSV
+    char modelo[20];        // Campo 4 do CSV
+    char quantidade[6];     // Campo 5 do CSV
+    struct Foguete* anterior;
+} Foguete;
 
-typedef struct Pilha{
+typedef struct Pilha {
     Foguete* topo;
-}Pilha;
+} Pilha;
 
-Pilha* abrirHistorico(){
+Pilha* abrirHistorico() {
     FILE *fp = fopen("historico.csv", "r");
     if(fp == NULL) {
         printf("Erro ao abrir arquivo!\n"); 
@@ -30,75 +32,120 @@ Pilha* abrirHistorico(){
     novaPilha->topo = NULL;
     char linha[100];
 
-    while(fgets(linha, sizeof(linha), fp) != NULL)
-    {
+    while(fgets(linha, sizeof(linha), fp) != NULL) {
         linha[strcspn(linha, "\n")] = '\0';
-        Foguete *novoFoguete = malloc(sizeof(Foguete));
         
-        char *token = strtok(linha, ";");
-
-        if (token)
-        {
-            strncpy(novoFoguete->horario, token, sizeof(novoFoguete->horario) - 1);
-            novoFoguete->horario[sizeof(novoFoguete->horario) - 1] = '\0';
-            
-            token = strtok(NULL, ";");
-            strncpy(novoFoguete->ID, token, sizeof(novoFoguete->ID) - 1);
-            novoFoguete->ID[sizeof(novoFoguete->ID) - 1] = '\0';
-
-            token = strtok(NULL, ";");
-            strncpy(novoFoguete->localizacao, token, sizeof(novoFoguete->localizacao) - 1);
-            novoFoguete->localizacao[sizeof(novoFoguete->localizacao) - 1] = '\0';
-
-            token = strtok(NULL, ";");
-            strncpy(novoFoguete->modelo, token, sizeof(novoFoguete->modelo) - 1);
-            novoFoguete->modelo[sizeof(novoFoguete->modelo) - 1] = '\0';
+        Foguete *novoFoguete = malloc(sizeof(Foguete));
+        if(!novoFoguete) {
+            fclose(fp);
+            free(novaPilha);
+            return NULL;
         }
-        novoFoguete->anterior = novaPilha->topo; //Empilhamento correto da pilha
+
+        // Extração de tokens na ordem correta do CSV
+        char *token = strtok(linha, ";");
+        if(!token) { 
+            free(novoFoguete);
+            continue;
+        }
+        strncpy(novoFoguete->horario, token, sizeof(novoFoguete->horario) - 1);
+        
+        token = strtok(NULL, ";");
+        if(!token) {
+            free(novoFoguete);
+            continue;
+        }
+        strncpy(novoFoguete->ID, token, sizeof(novoFoguete->ID) - 1);
+        
+        token = strtok(NULL, ";");
+        if(!token) {
+            free(novoFoguete);
+            continue;
+        }
+        strncpy(novoFoguete->localizacao, token, sizeof(novoFoguete->localizacao) - 1);
+        
+        token = strtok(NULL, ";");
+        if(!token) {
+            free(novoFoguete);
+            continue;
+        }
+        strncpy(novoFoguete->modelo, token, sizeof(novoFoguete->modelo) - 1);
+        
+        token = strtok(NULL, ";");
+        if(!token) {
+            free(novoFoguete);
+            continue;
+        }
+        strncpy(novoFoguete->quantidade, token, sizeof(novoFoguete->quantidade) - 1);
+
+        // Empilhamento correto
+        novoFoguete->anterior = novaPilha->topo;
         novaPilha->topo = novoFoguete;
     }
     fclose(fp);
     return novaPilha;
 }
 
-void imprimirHistorico(Pilha *h){
+void imprimirHistorico(Pilha *h) {
     Foguete *atual = h->topo;
-
     while(atual != NULL) {
-        printf("Modelo: %s ", atual->modelo);
+        printf("Horario: %s ", atual->horario);    // Ordem de exibição corrigida
         printf("ID: %s ", atual->ID);
         printf("Destino: %s ", atual->localizacao);
-        printf("Horario: %s ", atual->horario);
-        printf("Quantidade de passageiros: %s", atual->quantidade);
+        printf("Modelo: %s ", atual->modelo);
+        printf("Passageiros: %s\n", atual->quantidade);
         atual = atual->anterior;
     }
 }
-//em ajuste
-void removerHistorico(Pilha *h){
-    if(h->topo == NULL) return -1;
 
+// Função simplificada sem retorno
+void removerHistorico(Pilha *h) {
+    if(h->topo == NULL) return;
+    
     Foguete* removido = h->topo;
-    int valor = removido->horario;
     h->topo = removido->anterior;
     free(removido);
-    return valor;
 }
 
-void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[], char modelo[], char quantidade[]){
-    Foguete* novo = (Foguete*)malloc(sizeof(Foguete));
+void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[], char modelo[], char quantidade[]) {
+    Foguete* novo = malloc(sizeof(Foguete));
+    if(!novo) return;
 
-    strcpy(novo->ID,id);
-    strcpy(novo->horario,horario);
-    strcpy(novo->localizacao, localizacao);
-    strcpy(novo->modelo, modelo);
-    strcpy(novo->quantidade, quantidade);
- 
+    // Cópias seguras com tamanho máximo
+    snprintf(novo->horario, sizeof(novo->horario), "%s", horario);
+    snprintf(novo->ID, sizeof(novo->ID), "%s", id);
+    snprintf(novo->localizacao, sizeof(novo->localizacao), "%s", localizacao);
+    snprintf(novo->modelo, sizeof(novo->modelo), "%s", modelo);
+    snprintf(novo->quantidade, sizeof(novo->quantidade), "%s", quantidade);
+    
     novo->anterior = h->topo;
     h->topo = novo;
 }
 
-void fecharHistorico(Pilha *h){
-    salvarHistorico(h);  // Salva alterações antes de liberar memória
+void salvarHistorico(Pilha *p) {
+    FILE *fp = fopen("historico.csv", "w");// Modo write para sobrescrever
+    if(fp == NULL) {
+        printf("Erro ao salvar Historico!\n");
+        return;
+    }
+
+    Foguete *atual = p->topo;
+    while(atual != NULL) {
+        // Ordem de escrita igual à leitura
+        fprintf(fp, "%s;%s;%s;%s;%s\n", 
+            atual->horario,
+            atual->ID,
+            atual->localizacao,
+            atual->modelo,
+            atual->quantidade);
+        atual = atual->anterior;
+    }
+    
+    fclose(fp);
+}
+
+void fecharHistorico(Pilha *h) {
+    salvarHistorico(h);
     
     Foguete *atual = h->topo;
     while(atual != NULL) {
@@ -107,23 +154,4 @@ void fecharHistorico(Pilha *h){
         free(temp);
     }
     free(h);
-}
-
-void salvarHistorico(Pilha *p){
-    FILE *fp = fopen("historico.csv", "a");
-    if(fp == NULL) {
-        printf("Erro ao salvar Historico!\n");
-        return;
-    }
-
-    Foguete *atual = p->topo;
-    while(atual != NULL) {
-        fprintf(fp, "%s; ", atual->modelo);
-        fprintf(fp, "%s; ", atual->ID);
-        fprintf(fp, "%s; ", atual->localizacao);
-        fprintf(fp, "%s; ", atual->horario);
-        atual = atual->anterior;
-    }
-    
-    fclose(fp);
 }
