@@ -3,6 +3,7 @@
 #include "func_gerais.h"
 
 typedef struct Foguete{
+    char quantidade[6];
     char ID[10];
     char modelo[20];
     char horario[6];
@@ -53,15 +54,8 @@ Pilha* abrirHistorico(){
             strncpy(novoFoguete->modelo, token, sizeof(novoFoguete->modelo) - 1);
             novoFoguete->modelo[sizeof(novoFoguete->modelo) - 1] = '\0';
         }
-        if(novaPilha->topo == NULL)
-        {
-            novoFoguete->anterior = NULL;
-            novaPilha->topo = novoFoguete;
-        }
-        else
-        {
-            novaPilha->topo->anterior = novoFoguete;
-        }
+        novoFoguete->anterior = novaPilha->topo; //Empilhamento correto da pilha
+        novaPilha->topo = novoFoguete;
     }
     fclose(fp);
     return novaPilha;
@@ -75,6 +69,7 @@ void imprimirHistorico(Pilha *h){
         printf("ID: %s ", atual->ID);
         printf("Destino: %s ", atual->localizacao);
         printf("Horario: %s ", atual->horario);
+        printf("Quantidade de passageiros: %s", atual->quantidade);
         atual = atual->anterior;
     }
 }
@@ -89,14 +84,14 @@ void removerHistorico(Pilha *h){
     return valor;
 }
 
-void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[], char modelo[]){
-    Foguete* novo = (Foguete*)malloc(sizeof(Foguete
-));
+void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[], char modelo[], char quantidade[]){
+    Foguete* novo = (Foguete*)malloc(sizeof(Foguete));
 
     strcpy(novo->ID,id);
     strcpy(novo->horario,horario);
     strcpy(novo->localizacao, localizacao);
     strcpy(novo->modelo, modelo);
+    strcpy(novo->quantidade, quantidade);
  
     novo->anterior = h->topo;
     h->topo = novo;
