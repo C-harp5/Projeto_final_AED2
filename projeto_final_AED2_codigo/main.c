@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include "destinos.c" 
 #include "decolagens.c"
-//#include "historico.c"
+#include "historico.c"
 
 void limparBuffer() {
     int c;
@@ -21,13 +21,13 @@ char menu() {
     
     printf("\n=== Menu de Controle ===");
     printf("\n1 - Cadastro de foguetes para decolagem");
-    printf("\n2 - Lista de foguetes para decolagem");
-    printf("\n3 - Remover foguete da lista de decolagens");
+    printf("\n2 - Fila de foguetes para decolagem");
+    printf("\n3 - Remover foguete da fila de decolagens");
     printf("\n4 - Lista de destinos");
     printf("\n5 - Remover destino");
     printf("\n6 - Decolar foguete");
     printf("\n7 - Historico de decolagens");
-    printf("\n8 - Adicionar destinos");
+    printf("\n8 - Adicionar destinos a lista");
     printf("\n9 - Sair");
     printf("\nEscolha: ");
     
@@ -52,7 +52,7 @@ int main() {
     bool exit = false;
     Lista *listaDestinos = abrirDestinos();
     Fila *filaDecolagem = abrirDecolagens();
-    //Pilha *pilhaHistorico = abrirHistorico();
+    Pilha *pilhaHistorico = abrirHistorico();
 
     // Verifica se a lista foi criada corretamente
     if(listaDestinos == NULL) {
@@ -148,7 +148,6 @@ int main() {
                 limpar_str(tempID);
 
                 removerDecolagem(filaDecolagem, tempID);
-
                 break;
 
             case '4':
@@ -166,11 +165,13 @@ int main() {
 
             case '6':
                 printf("\nDecolagem selecionada\n");
+                adicionarHistorico(pilhaHistorico,filaDecolagem->inicio->ID, filaDecolagem->inicio->horario, filaDecolagem->inicio->localizacao, filaDecolagem->inicio->foguete.modelo);
                 decolagem(filaDecolagem);
                 break;
 
             case '7':
                 printf("\nHistórico de decolagens\n");
+                imprimirHistorico(pilhaHistorico);
                 break;
 
             case '8': 
