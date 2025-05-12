@@ -30,49 +30,7 @@ Pilha* abrirHistorico(){
     char linha[100];
 
     while(fgets(linha, sizeof(linha), fp) != NULL) {
-        limpar_str(linha);
-        
         foguete *novoFoguete = malloc(sizeof(foguete));
-        if(novoFoguete == NULL) {
-            fclose(fp);
-            free(novaPilha);
-            return NULL;
-        }
-
-        char *token = strtok(linha, ";");
-        if(!token) {
-            free(novoFoguete);
-            continue;
-        }
-        strncpy(novoFoguete->ID, token, sizeof(novoFoguete->ID) - 1);
-        limpar_str(novoFoguete->ID);
-
-        token = strtok(NULL, ";");
-        if(!token) {
-            free(novoFoguete);
-            continue;
-        }
-        strncpy(novoFoguete->horario, token, sizeof(novoFoguete->horario) - 1);
-        limpar_str(novoFoguete->horario);
-        
-        token = strtok(NULL, ";");
-        if(!token) {
-            free(novoFoguete);
-            continue;
-        }
-        strncpy(novoFoguete->localizacao, token, sizeof(novoFoguete->localizacao) - 1);
-        limpar_str(novoFoguete->localizacao);
-        
-        token = strtok(NULL, ";");
-        if(!token) {
-            free(novoFoguete);
-            continue;
-        }
-        strncpy(novoFoguete->modelo, token, sizeof(novoFoguete->modelo) - 1);
-        limpar_str(novoFoguete->modelo);
-        
-        novoFoguete->proximo = novaPilha->topo;
-        novaPilha->topo = novoFoguete;
     }
 
     fclose(fp);
