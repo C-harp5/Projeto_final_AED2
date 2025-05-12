@@ -40,7 +40,7 @@ char verificarModelo(const char modelo[], const char capacidade_fornecida_str[])
         }
 
         // Compara o modelo
-        if (strcmp(modeloArquivo, modelo) == 0) {
+        if (strcasecmp(modeloArquivo, modelo) == 0) {
             fclose(arquivo);
 
             // Converte as capacidades para números
