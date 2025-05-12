@@ -11,9 +11,8 @@ void limparBuffer() {
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-void limpar_str(char str[])
-{
-    str[strcspn(str, "\n")] = '\0';
+void limpar_str(char str[]) {
+    str[strcspn(str, "\n")] = '\0'; // Remove o \n
 }
 
 char menu() {

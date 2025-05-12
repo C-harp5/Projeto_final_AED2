@@ -229,11 +229,11 @@ void adicionarDecolagem(Fila *decolagemNova, const char horario[], const char mo
     }
 
     fprintf(fp, "%s;%s;%s;%s;%s\n",
-        localDestino,
-        horario,
-        idAeronave,
-        capacidade,
-        modelo
+        localDestino,    // Localização
+        horario,         // Horário
+        idAeronave,      // ID
+        capacidade,      // Capacidade
+        modelo           // Modelo
     );
 }
 
@@ -384,18 +384,31 @@ void decolagem(Fila *fila) {
 
 void fecharFila(Fila *fila) {
     if (fila == NULL) return;
+
+    // Passo 1: Salvar a fila no CSV
+    FILE *fp = fopen("decolagens.csv", "w");
+    if (fp != NULL) {
+        Decolagens *atual = fila->inicio;
+        while (atual != NULL) {
+            fprintf(fp, "%s;%s;%s;%s;%s\n",
+                atual->localizacao,
+                atual->horario,
+                atual->ID,
+                atual->foguete.capacidade,
+                atual->foguete.modelo
+            );
+            atual = atual->proximo;
+        }
+        fclose(fp);
+    }
+
+    // Passo 2: Liberar memória
     Decolagens *atual = fila->inicio;
-    // Passo 1: Liberar a memória da fila
-    atual = fila->inicio;
     while (atual != NULL) {
         Decolagens *proximo = atual->proximo;
         free(atual);
         atual = proximo;
     }
-
-    // Reseta os ponteiros da fila
     fila->inicio = NULL;
     fila->fim = NULL;
-
-    printf("Dados salvos no CSV\n");
 }

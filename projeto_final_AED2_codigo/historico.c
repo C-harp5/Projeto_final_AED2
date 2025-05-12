@@ -49,6 +49,7 @@ Pilha* abrirHistorico() {
             continue;
         }
         strncpy(novoFoguete->horario, token, sizeof(novoFoguete->horario) - 1);
+        novoFoguete->horario[sizeof(novoFoguete->horario) - 1] = '\0';
         
         token = strtok(NULL, ";");
         if(!token) {
@@ -56,6 +57,7 @@ Pilha* abrirHistorico() {
             continue;
         }
         strncpy(novoFoguete->ID, token, sizeof(novoFoguete->ID) - 1);
+        novoFoguete->ID[sizeof(novoFoguete->ID) - 1] = '\0';
         
         token = strtok(NULL, ";");
         if(!token) {
@@ -63,6 +65,7 @@ Pilha* abrirHistorico() {
             continue;
         }
         strncpy(novoFoguete->localizacao, token, sizeof(novoFoguete->localizacao) - 1);
+        novoFoguete->localizacao[sizeof(novoFoguete->localizacao) - 1] = '\0';
         
         token = strtok(NULL, ";");
         if(!token) {
@@ -70,6 +73,7 @@ Pilha* abrirHistorico() {
             continue;
         }
         strncpy(novoFoguete->modelo, token, sizeof(novoFoguete->modelo) - 1);
+        novoFoguete->modelo[sizeof(novoFoguete->modelo) - 1] = '\0';
         
         token = strtok(NULL, ";");
         if(!token) {
@@ -77,6 +81,7 @@ Pilha* abrirHistorico() {
             continue;
         }
         strncpy(novoFoguete->quantidade, token, sizeof(novoFoguete->quantidade) - 1);
+        novoFoguete->quantidade[sizeof(novoFoguete->quantidade) - 1] = '\0';
 
         // Empilhamento correto
         novoFoguete->anterior = novaPilha->topo;
@@ -117,7 +122,7 @@ void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[],
     snprintf(novo->ID, 10, "%s", id);
     snprintf(novo->localizacao, 40, "%s", localizacao);
     snprintf(novo->modelo, 20, "%s", modelo);
-    snprintf(novo->quantidade, 10, "%s", quantidade);
+    snprintf(novo->quantidade, 6, "%s", quantidade);
 
     novo->anterior = h->topo;
     h->topo = novo;
@@ -146,16 +151,13 @@ void salvarHistorico(Pilha *p) {
 
         // Grava do índice 0 (mais recente) até count-1 (mais antigo) usando fputs/fputc para garantir separadores ASCII
     for (int i = 0; i < count; i++) {
-        fputs(elementos[i]->horario, fp);
-        fputc(';', fp);
-        fputs(elementos[i]->ID, fp);
-        fputc(';', fp);
-        fputs(elementos[i]->localizacao, fp);
-        fputc(';', fp);
-        fputs(elementos[i]->modelo, fp);
-        fputc(';', fp);
-        fputs(elementos[i]->quantidade, fp);
-        fputc('\n', fp);
+        fprintf(fp, "%s;%s;%s;%s;%s\n", 
+            elementos[i]->horario,
+            elementos[i]->ID,
+            elementos[i]->localizacao,
+            elementos[i]->modelo,
+            elementos[i]->quantidade
+        );
     }
     
     fclose(fp);

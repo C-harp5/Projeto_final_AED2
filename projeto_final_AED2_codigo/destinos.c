@@ -120,22 +120,11 @@ void fecharLista(Lista *d) {
 
 int verificarDestino(Lista *d, const char destinoExistente[]) {
     Destinos *atual = d->inicio;
-    Destinos *anterior = NULL;
-
     while(atual != NULL) {
         if(strcmp(atual->localizacao, destinoExistente) == 0) {
-            if(anterior == NULL) {
-                // Remove o primeiro nó da lista
-                d->inicio = atual->proximo;
-            } else {
-                // Ajusta o ponteiro do nó anterior
-                anterior->proximo = atual->proximo;
-            }
-            free(atual);
-            return 1;
+            return 1; // Destino encontrado
         }
-        anterior = atual;
         atual = atual->proximo;
     }
-    return 0;
+    return 0; // Destino não existe
 }
