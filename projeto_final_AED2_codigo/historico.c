@@ -94,7 +94,7 @@ Pilha* abrirHistorico() {
 void imprimirHistorico(Pilha *h) {
     Foguete *atual = h->topo;
     while(atual != NULL) {
-        printf("Horario: %s ", atual->horario);    // Ordem de exibição corrigida
+        printf("Horario: %s ", atual->horario);
         printf("ID: %s ", atual->ID);
         printf("Destino: %s ", atual->localizacao);
         printf("Modelo: %s ", atual->modelo);

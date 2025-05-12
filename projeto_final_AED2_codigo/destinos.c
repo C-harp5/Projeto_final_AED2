@@ -121,7 +121,7 @@ void fecharLista(Lista *d) {
 int verificarDestino(Lista *d, const char destinoExistente[]) {
     Destinos *atual = d->inicio;
     while(atual != NULL) {
-        if(strcmp(atual->localizacao, destinoExistente) == 0) {
+        if(strcasecmp(atual->localizacao, destinoExistente) == 0) {
             return 1; // Destino encontrado
         }
         atual = atual->proximo;
