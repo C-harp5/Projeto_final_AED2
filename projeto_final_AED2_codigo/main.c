@@ -165,7 +165,7 @@ int main() {
 
             case '6':
                 printf("\nDecolagem selecionada\n");
-                adicionarHistorico(pilhaHistorico,filaDecolagem->inicio->ID, filaDecolagem->inicio->horario, filaDecolagem->inicio->localizacao, filaDecolagem->inicio->foguete.modelo);
+                adicionarHistorico(pilhaHistorico,filaDecolagem->inicio->ID, filaDecolagem->inicio->horario, filaDecolagem->inicio->localizacao, filaDecolagem->inicio->foguete.modelo, filaDecolagem->inicio->foguete.capacidade);
                 decolagem(filaDecolagem);
                 break;
 
@@ -186,6 +186,7 @@ int main() {
                 printf("\nEncerrando sistema...\n");
                 fecharLista(listaDestinos);
                 fecharFila(filaDecolagem);
+                fecharHistorico(pilhaHistorico);
                 exit = true;
                 break;
 
