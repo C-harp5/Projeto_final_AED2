@@ -60,7 +60,7 @@ void salvarDestinos(Lista *d) {
 
     Destinos *atual = d->inicio;
     while(atual != NULL) {
-        fprintf(fp, "%s\n", atual->localizacao);
+        fprintf(fp, "%s;\n", atual->localizacao);
         atual = atual->proximo;
     }
     

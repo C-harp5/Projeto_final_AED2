@@ -92,10 +92,10 @@ void salvarHistorico(Pilha *p){
 
     foguete *atual = p->topo;
     while(atual != NULL) {
-        fprintf(fp, "%s ", atual->modelo);
-        fprintf(fp, "%s ", atual->ID);
-        fprintf(fp, "%s ", atual->localizacao);
-        fprintf(fp, "%s ", atual->horario);
+        fprintf(fp, "%s; ", atual->modelo);
+        fprintf(fp, "%s; ", atual->ID);
+        fprintf(fp, "%s; ", atual->localizacao);
+        fprintf(fp, "%s; ", atual->horario);
         atual = atual->proximo;
     }
     
