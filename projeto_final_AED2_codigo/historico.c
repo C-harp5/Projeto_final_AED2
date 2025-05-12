@@ -107,51 +107,69 @@ void removerHistorico(Pilha *h) {
     free(removido);
 }
 
+// Adiciona um novo histórico e atualiza o CSV com o mais recente em primeiro lugar
 void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[], char modelo[], char quantidade[]) {
-    Foguete* novo = malloc(sizeof(Foguete));
-    if(!novo) return;
+    if (!h) return;
+    Foguete *novo = malloc(sizeof(Foguete));
+    if (!novo) return;
 
-    // Cópias seguras com tamanho máximo
     snprintf(novo->horario, sizeof(novo->horario), "%s", horario);
     snprintf(novo->ID, sizeof(novo->ID), "%s", id);
     snprintf(novo->localizacao, sizeof(novo->localizacao), "%s", localizacao);
     snprintf(novo->modelo, sizeof(novo->modelo), "%s", modelo);
     snprintf(novo->quantidade, sizeof(novo->quantidade), "%s", quantidade);
-    
+
     novo->anterior = h->topo;
     h->topo = novo;
+
+    // Reescreve todo o CSV colocando o mais recente primeiro   
+    salvarHistorico(h);
 }
 
+// Salva a pilha inteira no CSV do mais recente (linha 1) ao mais antigo
 void salvarHistorico(Pilha *p) {
-    FILE *fp = fopen("historico.csv", "w");// Modo write para sobrescrever
-    if(fp == NULL) {
+    if (!p) return;
+    FILE *fp = fopen("historico.csv", "w");
+    if (!fp) {
         printf("Erro ao salvar Historico!\n");
         return;
     }
 
+    // Coleta ponteiros em array (máximo 100)
+    Foguete *elementos[100];
+    int count = 0;
     Foguete *atual = p->topo;
-    while(atual != NULL) {
-        // Ordem de escrita igual à leitura
-        fprintf(fp, "%s;%s;%s;%s;%s\n", 
-            atual->horario,
-            atual->ID,
-            atual->localizacao,
-            atual->modelo,
-            atual->quantidade);
+    while (atual && count < 100) {
+        elementos[count++] = atual;
         atual = atual->anterior;
+    }
+
+        // Grava do índice 0 (mais recente) até count-1 (mais antigo) usando fputs/fputc para garantir separadores ASCII
+    for (int i = 0; i < count; i++) {
+        fputs(elementos[i]->horario, fp);
+        fputc(';', fp);
+        fputs(elementos[i]->ID, fp);
+        fputc(';', fp);
+        fputs(elementos[i]->localizacao, fp);
+        fputc(';', fp);
+        fputs(elementos[i]->modelo, fp);
+        fputc(';', fp);
+        fputs(elementos[i]->quantidade, fp);
+        fputc(';', fp);
     }
     
     fclose(fp);
 }
 
+// Libera toda a pilha e fecha o histórico
 void fecharHistorico(Pilha *h) {
+    if (!h) return;
     salvarHistorico(h);
-    
     Foguete *atual = h->topo;
-    while(atual != NULL) {
-        Foguete *temp = atual;
-        atual = atual->anterior;
-        free(temp);
+    while (atual) {
+        Foguete *next = atual->anterior;
+        free(atual);
+        atual = next;
     }
     free(h);
 }
