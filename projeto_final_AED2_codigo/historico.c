@@ -113,11 +113,11 @@ void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[],
     Foguete *novo = malloc(sizeof(Foguete));
     if (!novo) return;
 
-    snprintf(novo->horario, sizeof(novo->horario), "%s", horario);
-    snprintf(novo->ID, sizeof(novo->ID), "%s", id);
-    snprintf(novo->localizacao, sizeof(novo->localizacao), "%s", localizacao);
-    snprintf(novo->modelo, sizeof(novo->modelo), "%s", modelo);
-    snprintf(novo->quantidade, sizeof(novo->quantidade), "%s", quantidade);
+    snprintf(novo->horario, 6, "%s", horario);
+    snprintf(novo->ID, 10, "%s", id);
+    snprintf(novo->localizacao, 40, "%s", localizacao);
+    snprintf(novo->modelo, 20, "%s", modelo);
+    snprintf(novo->quantidade, 10, "%s", quantidade);
 
     novo->anterior = h->topo;
     h->topo = novo;
@@ -155,7 +155,7 @@ void salvarHistorico(Pilha *p) {
         fputs(elementos[i]->modelo, fp);
         fputc(';', fp);
         fputs(elementos[i]->quantidade, fp);
-        fputc(';', fp);
+        fputc('\n', fp);
     }
     
     fclose(fp);
