@@ -140,17 +140,19 @@ void salvarHistorico(Pilha *p) {
         return;
     }
 
-    // Coleta ponteiros em array (máximo 100)
+    // Cria uma lista temporária para inverter a ordem
     Foguete *elementos[100];
     int count = 0;
     Foguete *atual = p->topo;
+
+    // Coleta elementos do topo (mais recente) para a base (mais antigo)
     while (atual && count < 100) {
         elementos[count++] = atual;
         atual = atual->anterior;
     }
 
-        // Grava do índice 0 (mais recente) até count-1 (mais antigo) usando fputs/fputc para garantir separadores ASCII
-    for (int i = 0; i < count; i++) {
+    // Grava do último para o primeiro (mais antigo → mais recente)
+    for (int i = count - 1; i >= 0; i--) {
         fprintf(fp, "%s;%s;%s;%s;%s\n", 
             elementos[i]->horario,
             elementos[i]->ID,
@@ -159,7 +161,7 @@ void salvarHistorico(Pilha *p) {
             elementos[i]->quantidade
         );
     }
-    
+
     fclose(fp);
 }
 
