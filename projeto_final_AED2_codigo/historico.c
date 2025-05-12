@@ -2,16 +2,16 @@
 #include <string.h>
 #include "func_gerais.h"
 
-typedef struct foguete{
+typedef struct Foguete{
     char ID[10];
     char modelo[20];
     char horario[6];
     char localizacao[40];
-    struct Elemento* proximo;
-}foguete;
+    struct Elemento* anterior;
+}Foguete;
 
 typedef struct Pilha{
-    foguete* topo;
+    Foguete* topo;
 }Pilha;
 
 Pilha* abrirHistorico(){
@@ -29,55 +29,86 @@ Pilha* abrirHistorico(){
     novaPilha->topo = NULL;
     char linha[100];
 
-    while(fgets(linha, sizeof(linha), fp) != NULL) {
-        foguete *novoFoguete = malloc(sizeof(foguete));
-    }
+    while(fgets(linha, sizeof(linha), fp) != NULL)
+    {
+        linha[strcspn(linha, "\n")] = '\0';
+        Foguete *novoFoguete = malloc(sizeof(Foguete));
+        
+        char *token = strtok(linha, ";");
 
+        if (token)
+        {
+            strncpy(novoFoguete->horario, token, sizeof(novoFoguete->horario) - 1);
+            novoFoguete->horario[sizeof(novoFoguete->horario) - 1] = '\0';
+            
+            token = strtok(NULL, ";");
+            strncpy(novoFoguete->ID, token, sizeof(novoFoguete->ID) - 1);
+            novoFoguete->ID[sizeof(novoFoguete->ID) - 1] = '\0';
+
+            token = strtok(NULL, ";");
+            strncpy(novoFoguete->localizacao, token, sizeof(novoFoguete->localizacao) - 1);
+            novoFoguete->localizacao[sizeof(novoFoguete->localizacao) - 1] = '\0';
+
+            token = strtok(NULL, ";");
+            strncpy(novoFoguete->modelo, token, sizeof(novoFoguete->modelo) - 1);
+            novoFoguete->modelo[sizeof(novoFoguete->modelo) - 1] = '\0';
+        }
+        if(novaPilha->topo == NULL)
+        {
+            novoFoguete->anterior = NULL;
+            novaPilha->topo = novoFoguete;
+        }
+        else
+        {
+            novaPilha->topo->anterior = novoFoguete;
+        }
+    }
     fclose(fp);
     return novaPilha;
 }
 
 void imprimirHistorico(Pilha *h){
-    foguete *atual = h->topo;
+    Foguete *atual = h->topo;
 
     while(atual != NULL) {
         printf("Modelo: %s ", atual->modelo);
         printf("ID: %s ", atual->ID);
         printf("Destino: %s ", atual->localizacao);
         printf("Horario: %s ", atual->horario);
-        atual = atual->proximo;
+        atual = atual->anterior;
     }
 }
 //em ajuste
 void removerHistorico(Pilha *h){
     if(h->topo == NULL) return -1;
 
-    foguete* removido = h->topo;
+    Foguete* removido = h->topo;
     int valor = removido->horario;
-    h->topo = removido->proximo;
+    h->topo = removido->anterior;
     free(removido);
     return valor;
 }
 
 void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[], char modelo[]){
-    foguete* novo = (foguete*)malloc(sizeof(foguete));
+    Foguete* novo = (Foguete*)malloc(sizeof(Foguete
+));
 
     strcpy(novo->ID,id);
     strcpy(novo->horario,horario);
     strcpy(novo->localizacao, localizacao);
     strcpy(novo->modelo, modelo);
  
-    novo->proximo = h->topo;
+    novo->anterior = h->topo;
     h->topo = novo;
 }
 
 void fecharHistorico(Pilha *h){
     salvarHistorico(h);  // Salva alterações antes de liberar memória
     
-    foguete *atual = h->topo;
+    Foguete *atual = h->topo;
     while(atual != NULL) {
-        foguete *temp = atual;
-        atual = atual->proximo;
+        Foguete *temp = atual;
+        atual = atual->anterior;
         free(temp);
     }
     free(h);
@@ -90,13 +121,13 @@ void salvarHistorico(Pilha *p){
         return;
     }
 
-    foguete *atual = p->topo;
+    Foguete *atual = p->topo;
     while(atual != NULL) {
         fprintf(fp, "%s; ", atual->modelo);
         fprintf(fp, "%s; ", atual->ID);
         fprintf(fp, "%s; ", atual->localizacao);
         fprintf(fp, "%s; ", atual->horario);
-        atual = atual->proximo;
+        atual = atual->anterior;
     }
     
     fclose(fp);
