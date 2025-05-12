@@ -52,6 +52,7 @@ int main() {
     bool exit = false;
     Lista *listaDestinos = abrirDestinos();
     Fila *filaDecolagem = abrirDecolagens();
+    //Pilha *pilhaHistorico = abrirHistorico();
 
     // Verifica se a lista foi criada corretamente
     if(listaDestinos == NULL) {

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "func_gerais.h"
 
 typedef struct foguete{
@@ -14,7 +15,68 @@ typedef struct Pilha{
 }Pilha;
 
 Pilha* abrirHistorico(){
-   
+    FILE *fp = fopen("historico.csv", "r");
+    if(fp == NULL) {
+        printf("Erro ao abrir arquivo!\n"); 
+        return NULL;
+    }
+
+    Pilha *novaPilha = malloc(sizeof(Pilha));
+    if(novaPilha == NULL) {
+        fclose(fp);
+        return NULL;
+    }
+    novaPilha->topo = NULL;
+    char linha[100];
+
+    while(fgets(linha, sizeof(linha), fp) != NULL) {
+        limpar_str(linha);
+        
+        foguete *novoFoguete = malloc(sizeof(foguete));
+        if(novoFoguete == NULL) {
+            fclose(fp);
+            free(novaPilha);
+            return NULL;
+        }
+
+        char *token = strtok(linha, ";");
+        if(!token) {
+            free(novoFoguete);
+            continue;
+        }
+        strncpy(novoFoguete->ID, token, sizeof(novoFoguete->ID) - 1);
+        limpar_str(novoFoguete->ID);
+
+        token = strtok(NULL, ";");
+        if(!token) {
+            free(novoFoguete);
+            continue;
+        }
+        strncpy(novoFoguete->horario, token, sizeof(novoFoguete->horario) - 1);
+        limpar_str(novoFoguete->horario);
+        
+        token = strtok(NULL, ";");
+        if(!token) {
+            free(novoFoguete);
+            continue;
+        }
+        strncpy(novoFoguete->localizacao, token, sizeof(novoFoguete->localizacao) - 1);
+        limpar_str(novoFoguete->localizacao);
+        
+        token = strtok(NULL, ";");
+        if(!token) {
+            free(novoFoguete);
+            continue;
+        }
+        strncpy(novoFoguete->modelo, token, sizeof(novoFoguete->modelo) - 1);
+        limpar_str(novoFoguete->modelo);
+        
+        novoFoguete->proximo = novaPilha->topo;
+        novaPilha->topo = novoFoguete;
+    }
+
+    fclose(fp);
+    return novaPilha;
 }
 
 void imprimirHistorico(Pilha *h){
