@@ -55,7 +55,8 @@ int main() {
     Pilha *pilhaHistorico = abrirHistorico();
 
     // Verifica se a lista foi criada corretamente
-    if(listaDestinos == NULL) {
+    if(listaDestinos == NULL)
+    {
         printf("Erro ao inicializar lista de destinos!\n");
         return 1;
     }
@@ -65,6 +66,13 @@ int main() {
         printf("Erro ao inicializar a fila de decolagens!\n");
         return 1;
     }
+
+    if(pilhaHistorico == NULL)
+    {
+        printf("Erro ao inicializar histórico!\n");
+        return 1;
+    }
+
 
     ordenarDecolagens(filaDecolagem);
 
@@ -165,8 +173,13 @@ int main() {
 
             case '6':
                 printf("\nDecolagem selecionada\n");
-                adicionarHistorico(pilhaHistorico,filaDecolagem->inicio->ID, filaDecolagem->inicio->horario, filaDecolagem->inicio->localizacao, filaDecolagem->inicio->foguete.modelo, filaDecolagem->inicio->foguete.capacidade);
-                decolagem(filaDecolagem);
+                if(filaDecolagem != NULL){
+                    adicionarHistorico(pilhaHistorico,filaDecolagem->inicio->ID, filaDecolagem->inicio->horario, filaDecolagem->inicio->localizacao, filaDecolagem->inicio->foguete.modelo, filaDecolagem->inicio->foguete.capacidade);
+                    decolagem(filaDecolagem);
+                } else
+                {
+                    printf("\nFila de decolagens vázia!\n");
+                }
                 break;
 
             case '7':
