@@ -132,8 +132,8 @@ void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[],
 }
 
 // Salva a pilha inteira no CSV do mais recente (linha 1) ao mais antigo
-void salvarHistorico(Pilha *p) {
-    if (!p) return;
+void salvarHistorico(Pilha *h) {
+    if (!h) return;
     FILE *fp = fopen("historico.csv", "w");
     if (!fp) {
         printf("Erro ao salvar Historico!\n");
@@ -143,7 +143,7 @@ void salvarHistorico(Pilha *p) {
     // Cria uma lista temporária para inverter a ordem
     Foguete *elementos[100];
     int count = 0;
-    Foguete *atual = p->topo;
+    Foguete *atual = h->topo;
 
     // Coleta elementos do topo (mais recente) para a base (mais antigo)
     while (atual && count < 100) {

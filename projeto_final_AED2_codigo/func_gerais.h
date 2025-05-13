@@ -30,7 +30,7 @@ void imprimirHistorico(Pilha *h); //Imprime o arquivo de histórico
 void removerHistorico(Pilha *h);//Remove o histórico
 void adicionarHistorico(Pilha *h, char id[], char horario[], char localizacao[], char modelo[], char quantidade[]);//Põe no historico
 void fecharHistorico(Pilha *h); //fecha o arquivo
-void salvarHistorico(Pilha *p);
+void salvarHistorico(Pilha *h);
 //------------------------------------------------------------------
 
 #endif
