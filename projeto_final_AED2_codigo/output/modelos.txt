@@ -1,3 +1,15 @@
 ModeloTeste1;10
-Falcon9;200
-Starship;1000
+Mercury-Redstone;1
+Gemini-Titan II;2
+Saturn-IB;3
+Saturn-V;3
+Space-Shuttle;7
+Soyuz-FG;3
+Long-March-2F;3
+Falcon9;7
+Falcon-Heavy;7
+Starship;100
+New-Shepard;6
+GSLV-Mk-III;3
+SLS;4
+VSS-Unity;2
