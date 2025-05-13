@@ -111,7 +111,6 @@ void imprimirHistorico(Pilha *h) {
 // Função simplificada sem retorno
 void removerHistorico(Pilha *h) {
     if(h->topo == NULL) return;
-    
     Foguete* removido = h->topo;
     h->topo = removido->anterior;
     free(removido);

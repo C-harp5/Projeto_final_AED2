@@ -27,13 +27,35 @@ char menu() {
     printf("\n6 - Decolar foguete");
     printf("\n7 - Historico de decolagens");
     printf("\n8 - Adicionar destinos a lista");
-    printf("\n9 - Sair");
+    printf("\n9 - Limpar Histórico");
+    printf("\n0 - Sair");
     printf("\nEscolha: ");
     
     scanf(" %c", &opcao);
     limparBuffer();
     
     return opcao;
+}
+
+char retornarMenu()
+{
+    char resultado = '0';
+    bool subMenu = true;
+    do{
+        printf("\nDeseja retornar ao menu principal?");
+        printf("\n[1 - sim | 0 - não]\n");
+        scanf(" %c", &resultado);
+        switch(resultado)
+        {
+            case '0' :
+            case '1' :
+                return resultado;
+            default:
+                printf("\nInsira algo válido.");
+                break;
+        }
+    }while(subMenu);
+    return '-';
 }
 
 int main() {
@@ -46,6 +68,7 @@ int main() {
     char tempModelo[50];
     //================================================
 
+    char opcaoSubmenu;
     char opcao;
     char destino[40];
     bool exit = false;
@@ -76,6 +99,7 @@ int main() {
     ordenarDecolagens(filaDecolagem);
 
     do{
+        system("cls");
         opcao = menu();
         
         switch(opcao) {
@@ -140,34 +164,109 @@ int main() {
                 adicionarDecolagem(filaDecolagem, tempHorario, tempModelo, tempCapacidade, tempID, tempDestino);
                 printf("\nDecolagem adicionada!");
                 ordenarDecolagens(filaDecolagem);
+                printf("\n ============================== ");
+                opcaoSubmenu = retornarMenu();
+                if(opcaoSubmenu == '1')
+                {
+                    printf("\n- - - Retornando - - -");
+                    sleep(1);
+                }else
+                {
+                    printf("\n- - - Saindo - - -");
+                    exit = true;
+                }
                 break;
 
             case '2':
-                printf("\nLista de foguetes selecionado\n");
-                imprimirDecolagem(filaDecolagem);
+                if(filaDecolagem != NULL){
+                    printf("\nLista de foguetes selecionado\n");
+                    imprimirDecolagem(filaDecolagem);
+                    printf("\n ============================== ");
+                }else
+                {
+                    printf("\nFila de foguetes vazia.");
+                }
+                opcaoSubmenu = retornarMenu();
+                if(opcaoSubmenu == '1')
+                {
+                    printf("\n- - - Retornando - - -");
+                    sleep(1);
+                }else
+                {
+                    printf("\n- - - Saindo - - -");
+                    exit = true;
+                }
                 break;
 
             case '3':
-                printf("\nRemover foguete selecionado\n");
-
-                printf("Insira o ID para a remoção: ");
-                fgets(tempID, sizeof(tempID), stdin);
-                limpar_str(tempID);
-
-                removerDecolagem(filaDecolagem, tempID);
+                if(filaDecolagem != NULL){
+                    printf("\nRemover foguete selecionado\n");
+                    printf("Insira o ID para a remoção: ");
+                    fgets(tempID, sizeof(tempID), stdin);
+                    limpar_str(tempID);
+                    removerDecolagem(filaDecolagem, tempID);
+                }
+                else
+                {
+                    printf("\nFila de foguetes vazia.");
+                }
+                printf("\n ============================== ");
+                opcaoSubmenu = retornarMenu();
+                if(opcaoSubmenu == '1')
+                {
+                    printf("\n- - - Retornando - - -");
+                    sleep(1);
+                }else
+                {
+                    printf("\n- - - Saindo - - -");
+                    exit = true;
+                }
                 break;
 
             case '4':
-                printf("\n=== Destinos Disponíveis ===\n");
-                imprimirDestinos(listaDestinos);
+                if(listaDestinos != NULL){
+                    printf("\n=== Destinos Disponíveis ===\n");
+                    imprimirDestinos(listaDestinos);
+                    printf("\n ============================== ");
+                }
+                else
+                {
+                    printf("\nA lista de destinos está vazia.");
+                }
+                opcaoSubmenu = retornarMenu();
+                if(opcaoSubmenu == '1')
+                {
+                    printf("\n- - - Retornando - - -");
+                    sleep(1);
+                }else
+                {
+                    printf("\n- - - Saindo - - -");
+                    exit = true;
+                }
                 break;
 
             case '5': 
-                printf("\nDigite o destino a remover: ");
-                fgets(destino, sizeof(destino), stdin);
-                limpar_str(destino);
-
-                removerDestino(listaDestinos, destino);
+                if(listaDestinos != NULL){
+                    printf("\nDigite o destino a remover: ");
+                    fgets(destino, sizeof(destino), stdin);
+                    limpar_str(destino);
+                    removerDestino(listaDestinos, destino);
+                }
+                else
+                {
+                    printf("\nLista de destino está vazia.");
+                }
+                printf("\n ============================== ");
+                opcaoSubmenu = retornarMenu();
+                if(opcaoSubmenu == '1')
+                {
+                    printf("\n- - - Retornando - - -");
+                    sleep(1);
+                }else
+                {
+                    printf("\n- - - Saindo - - -");
+                    exit = true;
+                }
                 break;
 
             case '6':
@@ -177,13 +276,42 @@ int main() {
                     decolagem(filaDecolagem);
                 } else
                 {
-                    printf("\nFila de decolagens vázia!\n");
+                    printf("\nFila de decolagens vazia!\n");
+                }
+                printf("\n ============================== ");
+                opcaoSubmenu = retornarMenu();
+                if(opcaoSubmenu == '1')
+                {
+                    printf("\n- - - Retornando - - -");
+                    sleep(1);
+                }else
+                {
+                    printf("\n- - - Saindo - - -");
+                    exit = true;
                 }
                 break;
 
             case '7':
-                printf("\nHistórico de decolagens\n");
-                imprimirHistorico(pilhaHistorico);
+                if(pilhaHistorico != NULL)
+                {
+                    printf("\nHistórico de decolagens\n");
+                    imprimirHistorico(pilhaHistorico);
+                }
+                else
+                {
+                    printf("\nHistórico vazio!");
+                }                
+                printf("\n ============================== ");
+                opcaoSubmenu = retornarMenu();
+                if(opcaoSubmenu == '1')
+                {
+                    printf("\n- - - Retornando - - -");
+                    sleep(1);
+                }else
+                {
+                    printf("\n- - - Saindo - - -");
+                    exit = true;
+                }              
                 break;
 
             case '8': 
@@ -193,12 +321,30 @@ int main() {
                 limpar_str(novoDestino);
                 adicionarDestino(listaDestinos, novoDestino);
                 break;
-
             case '9':
+                if(pilhaHistorico != NULL)
+                {
+                    removerHistorico(pilhaHistorico);
+                    printf("- Histórico apagado com sucesso!");
+                }else
+                {
+                    printf("\nHistórico vazio.");
+                }
+                printf("\n ============================== ");
+                opcaoSubmenu = retornarMenu();
+                if(opcaoSubmenu == '1')
+                {
+                    printf("\n- - - Retornando - - -");
+                    sleep(1);
+                }else
+                {
+                    printf("\n- - - Saindo - - -");
+                    exit = true;
+                }                
+                break;
+
+            case '0':
                 printf("\nEncerrando sistema...\n");
-                fecharLista(listaDestinos);
-                fecharFila(filaDecolagem);
-                fecharHistorico(pilhaHistorico);
                 exit = true;
                 break;
 
@@ -209,5 +355,9 @@ int main() {
         }
     }while(!exit);
 
+    //Está para fora pra garantir que SEMPRE vai fechar as aloações dinamicas.
+    fecharLista(listaDestinos);
+    fecharFila(filaDecolagem);
+    fecharHistorico(pilhaHistorico);
     return 0;
 }
