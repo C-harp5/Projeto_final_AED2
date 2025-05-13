@@ -12,6 +12,10 @@ typedef struct Lista {
     Destinos *inicio;
 } Lista;
 
+int listaVazia(Lista *d){
+    return (d == NULL || d->inicio == NULL);
+}
+
 Lista* abrirDestinos() { 
     FILE *fp = fopen("destinos.csv", "r");
     if(fp == NULL) {

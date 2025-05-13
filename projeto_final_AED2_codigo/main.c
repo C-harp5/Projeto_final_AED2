@@ -15,18 +15,6 @@ void limpar_str(char str[]){
     str[strcspn(str, "\n")] = '\0'; // Remove o \n
 }
 
-int listaVazia(Lista *lista){
-    return (lista == NULL || lista->inicio == NULL);
-}
-
-int filaVazia(Fila *fila){
-    return (fila == NULL || fila->inicio == NULL);
-}
-
-int historicoVazio(Pilha *pilha){
-    return (pilha == NULL || pilha->topo == NULL);
-}
-
 char menu() {
     char opcao;
     

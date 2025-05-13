@@ -17,6 +17,10 @@ typedef struct Pilha {
     Foguete* topo;
 } Pilha;
 
+int historicoVazio(Pilha *h){
+    return (h == NULL || h->topo == NULL);
+}
+
 Pilha* abrirHistorico() {
     FILE *fp = fopen("historico.csv", "r");
     if(fp == NULL) {

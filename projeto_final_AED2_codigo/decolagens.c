@@ -23,6 +23,10 @@ typedef struct Fila {
     Decolagens *fim;
 } Fila;
 
+int filaVazia(Fila *f){
+    return (f == NULL || f->inicio == NULL);
+}
+
 //Função para verificar o modelo
 char verificarModelo(const char modelo[], const char capacidade_fornecida_str[]) {
     FILE *arquivo = fopen("modelos.txt", "r");
@@ -188,8 +192,13 @@ void imprimirDecolagem(Fila *decolagem){
     printf("\n");
 }
 
-void adicionarDecolagem(Fila *decolagemNova, const char horario[], const char modelo[], const char capacidade[], const char idAeronave[], const char localDestino[]){
-       // 1. Alocar memória para a nova decolagem
+void adicionarDecolagem(Fila *decolagemNova,
+                        const char horario[],
+                        const char modelo[],
+                        const char capacidade[],
+                        const char idAeronave[],
+                        const char localDestino[]){
+    // 1. Alocar memória para a nova decolagem
     Decolagens *novaDecolagem = (Decolagens*)malloc(sizeof(Decolagens));
     if (novaDecolagem == NULL) {
         printf("Erro ao alocar memória!\n");
