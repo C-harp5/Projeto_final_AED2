@@ -54,8 +54,8 @@ char retornarMenu()
     char resultado = '0';
     bool subMenu = true;
     do{
-        printf("\nDeseja retornar ao menu principal?");
-        printf("\n[1 - sim | 0 - não]\n");
+        printf("\nDeseja retornar ao menu principal ou sair do programa?");
+        printf("\n[1 - Menu | 0 - Sair]\n");
         scanf(" %c", &resultado);
         switch(resultado)
         {
