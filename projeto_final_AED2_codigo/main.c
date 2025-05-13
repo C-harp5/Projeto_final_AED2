@@ -96,7 +96,7 @@ int main() {
                     switch(verificarModelo(tempModelo, tempCapacidade))
                     {
                         case '1':
-                            printf("\nCapacidade excedida.");
+                            printf("\nCapacidade excedida e/ou inválida.");
                             printf("\nInsira novamente\n");
                             system("pause");
                             continue;

@@ -34,6 +34,11 @@ Pilha* abrirHistorico() {
 
     while(fgets(linha, sizeof(linha), fp) != NULL) {
         linha[strcspn(linha, "\n")] = '\0';
+
+        if(linha[0] == '\0')
+        {
+            continue;
+        }
         
         Foguete *novoFoguete = malloc(sizeof(Foguete));
         if(!novoFoguete) {

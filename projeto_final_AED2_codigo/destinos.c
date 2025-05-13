@@ -27,6 +27,10 @@ Lista* abrirDestinos() {
     while(fgets(linha, sizeof(linha), fp) != NULL) {
         // Remove a quebra de linha
         linha[strcspn(linha, "\n")] = '\0';
+        if(linha[0] == '\0')
+        {
+            continue;
+        }
         
         Destinos *novoDestino = malloc(sizeof(Destinos));
         char *token = strtok(linha, ";");

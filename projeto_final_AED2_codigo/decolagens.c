@@ -54,7 +54,7 @@ char verificarModelo(const char modelo[], const char capacidade_fornecida_str[])
             }
 
             // Comparação numérica
-            if (capacidade_fornecida <= capacidade_modelo) {
+            if (capacidade_fornecida <= capacidade_modelo && capacidade_fornecida >= 0) {
                 return '0'; // Capacidade aceitável
             } else {
                 return '1'; // Capacidade excedida
@@ -91,6 +91,11 @@ Fila* abrirDecolagens() {
         // Remove a quebra de linha
         linha[strcspn(linha, "\n")] = '\0';
         
+        if(linha[0] == '\0')
+        {
+            continue;
+        }
+
         Decolagens *novaDecolagem = malloc(sizeof(Decolagens));
         char *token = strtok(linha, ";");
         
@@ -384,25 +389,7 @@ void decolagem(Fila *fila) {
 
 void fecharFila(Fila *fila) {
     if (fila == NULL) return;
-
-    // Passo 1: Salvar a fila no CSV
-    FILE *fp = fopen("decolagens.csv", "w");
-    if (fp != NULL) {
-        Decolagens *atual = fila->inicio;
-        while (atual != NULL) {
-            fprintf(fp, "%s;%s;%s;%s;%s\n",
-                atual->localizacao,
-                atual->horario,
-                atual->ID,
-                atual->foguete.capacidade,
-                atual->foguete.modelo
-            );
-            atual = atual->proximo;
-        }
-        fclose(fp);
-    }
-
-    // Passo 2: Liberar memória
+    //Liberar memória
     Decolagens *atual = fila->inicio;
     while (atual != NULL) {
         Decolagens *proximo = atual->proximo;
