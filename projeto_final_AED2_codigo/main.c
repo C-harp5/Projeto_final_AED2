@@ -11,8 +11,20 @@ void limparBuffer() {
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-void limpar_str(char str[]) {
+void limpar_str(char str[]){
     str[strcspn(str, "\n")] = '\0'; // Remove o \n
+}
+
+int listaVazia(Lista *lista){
+    return (lista == NULL || lista->inicio == NULL);
+}
+
+int filaVazia(Fila *fila){
+    return (fila == NULL || fila->inicio == NULL);
+}
+
+int historicoVazio(Pilha *pilha){
+    return (pilha == NULL || pilha->topo == NULL);
 }
 
 char menu() {
@@ -178,7 +190,8 @@ int main() {
                 break;
 
             case '2':
-                if(filaDecolagem != NULL){
+                if(!filaVazia(filaDecolagem)){
+                    system("cls");
                     printf("\nLista de foguetes selecionado\n");
                     imprimirDecolagem(filaDecolagem);
                     printf("\n ============================== ");
@@ -199,7 +212,7 @@ int main() {
                 break;
 
             case '3':
-                if(filaDecolagem != NULL){
+                if(!filaVazia(filaDecolagem)){
                     printf("\nRemover foguete selecionado\n");
                     printf("Insira o ID para a remoção: ");
                     fgets(tempID, sizeof(tempID), stdin);
@@ -224,7 +237,8 @@ int main() {
                 break;
 
             case '4':
-                if(listaDestinos != NULL){
+                if(!listaVazia(listaDestinos)){
+                    system("cls");
                     printf("\n=== Destinos Disponíveis ===\n");
                     imprimirDestinos(listaDestinos);
                     printf("\n ============================== ");
@@ -246,7 +260,7 @@ int main() {
                 break;
 
             case '5': 
-                if(listaDestinos != NULL){
+                if(!listaVazia(listaDestinos)){
                     printf("\nDigite o destino a remover: ");
                     fgets(destino, sizeof(destino), stdin);
                     limpar_str(destino);
@@ -270,8 +284,9 @@ int main() {
                 break;
 
             case '6':
+                system("cls");
                 printf("\nDecolagem selecionada\n");
-                if(filaDecolagem != NULL){
+                if(!filaVazia(filaDecolagem)){
                     adicionarHistorico(pilhaHistorico,filaDecolagem->inicio->ID, filaDecolagem->inicio->horario, filaDecolagem->inicio->localizacao, filaDecolagem->inicio->foguete.modelo, filaDecolagem->inicio->foguete.capacidade);
                     decolagem(filaDecolagem);
                 } else
@@ -292,8 +307,9 @@ int main() {
                 break;
 
             case '7':
-                if(pilhaHistorico != NULL)
+                if(!historicoVazio(pilhaHistorico))
                 {
+                    system("cls");
                     printf("\nHistórico de decolagens\n");
                     imprimirHistorico(pilhaHistorico);
                 }
@@ -322,7 +338,7 @@ int main() {
                 adicionarDestino(listaDestinos, novoDestino);
                 break;
             case '9':
-                if(pilhaHistorico != NULL)
+                if(!historicoVazio(pilhaHistorico))
                 {
                     removerHistorico(pilhaHistorico);
                     printf("- Histórico apagado com sucesso!");
