@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <iso646.h>
 #include "func_gerais.h"
 
 struct foguetes{
@@ -28,46 +29,39 @@ int filaVazia(Fila *f){
 }
 
 //Função para verificar o modelo
-char verificarModelo(const char modelo[], const char capacidade_fornecida_str[]) {
+char verificarModelo(const char modelo[], const char capacidade_str[]) {
+    char resultado = '2'; // Default: modelo não encontrado
     FILE *arquivo = fopen("modelos.txt", "r");
-    if (arquivo == NULL) return '2'; // Arquivo não encontrado
 
-    char linha[100];
-    while (fgets(linha, sizeof(linha), arquivo)) {
-        // Remove a quebra de linha (caso exista)
-        linha[strcspn(linha, "\n")] = '\0';
+    if (arquivo) {
+        char linha[100];
+        while (fgets(linha, sizeof(linha), arquivo)) {
+            linha[strcspn(linha, "\n")] = '\0';
 
-        char modeloArquivo[50], capacidadeArquivo[50];
-        // Divide a linha em modelo e capacidade
-        if (sscanf(linha, "%49[^;];%49s", modeloArquivo, capacidadeArquivo) != 2) {
-            continue; // Ignora linhas mal formatadas
-        }
+            char modelo_arq[50], capacidade_arq[50];
+            if (sscanf(linha, "%49[^;];%49s", modelo_arq, capacidade_arq) != 2) continue;
 
-        // Compara o modelo
-        if (strcasecmp(modeloArquivo, modelo) == 0) {
-            fclose(arquivo);
+            if (strcasecmp(modelo_arq, modelo) == 0) {
+                char *end1, *end2;
+                long capacidade, max_capacidade;
+                
+                errno = 0;
+                capacidade = strtol(capacidade_str, &end1, 10);
+                int err_capacidade = errno;
+                
+                errno = 0;
+                max_capacidade = strtol(capacidade_arq, &end2, 10);
+                int err_max = errno;
 
-            // Converte as capacidades para números
-            char *endptr;
-            long capacidade_fornecida = strtol(capacidade_fornecida_str, &endptr, 10);
-            long capacidade_modelo = strtol(capacidadeArquivo, &endptr, 10);
-
-            // Verifica erros de conversão
-            if (errno != 0 || *endptr != '\0') {
-                return '1'; // Capacidade inválida (não é número)
-            }
-
-            // Comparação numérica
-            if (capacidade_fornecida <= capacidade_modelo && capacidade_fornecida >= 0) {
-                return '0'; // Capacidade aceitável
-            } else {
-                return '1'; // Capacidade excedida
+                resultado = (err_capacidade || err_max || *end1 || *end2 || 
+                            capacidade <= 0 || capacidade > max_capacidade) ? '1' : '0';
+                break;
             }
         }
+        fclose(arquivo);
     }
 
-    fclose(arquivo);
-    return '2'; // Modelo não encontrado
+    return resultado;
 }
 
 //Função para conversão do horario
@@ -127,7 +121,7 @@ Fila* abrirDecolagens() {
 
         novaDecolagem->proximo = NULL;
 
-        // CORREÇÃO: Vincular os nós corretamente
+        //Vincular os nós corretamente
         if (novaFila->inicio == NULL) {
             novaFila->inicio = novaDecolagem;
             novaFila->fim = novaDecolagem;
@@ -197,7 +191,8 @@ void adicionarDecolagem(Fila *decolagemNova,
                         const char modelo[],
                         const char capacidade[],
                         const char idAeronave[],
-                        const char localDestino[]){
+                        const char localDestino[])
+    {
     // 1. Alocar memória para a nova decolagem
     Decolagens *novaDecolagem = (Decolagens*)malloc(sizeof(Decolagens));
     if (novaDecolagem == NULL) {
