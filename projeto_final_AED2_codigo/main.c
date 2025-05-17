@@ -6,31 +6,46 @@
 #include "decolagens.c"
 #include "historico.c"
 
-void limparBuffer() {
+
+//Definições para facilitar a impressão
+#define LINHA "================================================"
+#define SUBLINHA "--------------------------------"
+
+void limparBuffer(){
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
 void limpar_str(char str[]){
-    str[strcspn(str, "\n")] = '\0'; // Remove o \n
+    str[strcspn(str, "\n")] = '\0';
 }
 
-char menu() {
+void cabecalho(const char* titulo){
+    system("cls");
+    printf("\n%s", LINHA);
+    printf("\n%-40s", titulo);
+    printf("\n%s\n", LINHA);
+}
+
+char menu(){
     char opcao;
     
-    printf("\n=-=-= Menu de Controle =-=-=");
+    printf("\n%s", LINHA);
+    printf("\n          CONTROLE DE DECOLAGENS ESPACIAIS");
+    printf("\n%s", LINHA);
     
-    printf("\n1 - Cadastro de foguetes para decolagem");
-    printf("\n2 - Fila de foguetes para decolagem");
-    printf("\n3 - Remover foguete da fila de decolagens");
-    printf("\n4 - Lista de destinos");
-    printf("\n5 - Remover destino");
-    printf("\n6 - Decolar foguete");
-    printf("\n7 - Historico de decolagens");
-    printf("\n8 - Adicionar destinos a lista");
-    printf("\n9 - Limpar Histórico");
-    printf("\n0 - Sair");
-    printf("\nEscolha: ");
+    printf("\n 1. Cadastrar foguete para decolagem");
+    printf("\n 2. Exibir fila de decolagens");
+    printf("\n 3. Remover foguete da fila");
+    printf("\n 4. Listar destinos disponiveis");
+    printf("\n 5. Remover destino");
+    printf("\n 6. Realizar decolagem");
+    printf("\n 7. Historico de decolagens");
+    printf("\n 8. Adicionar novo destino");
+    printf("\n 9. Limpar historico");
+    printf("\n 0. Sair do sistema");
+    printf("\n%s", LINHA);
+    printf("\n Escolha: ");
     
     scanf(" %c", &opcao);
     limparBuffer();
@@ -38,331 +53,222 @@ char menu() {
     return opcao;
 }
 
-char retornarMenu()
-{
-    char resultado = '0';
-    bool subMenu = true;
+char retornarMenu(){
+    char resultado;
+    
+    printf("\n%s", SUBLINHA);
+    printf("\n [1] Retornar ao menu principal");
+    printf("\n [0] Encerrar programa");
+    printf("\n%s", SUBLINHA);
+    printf("\n Opcao: ");
+    
     do{
-        printf("\nDeseja retornar ao menu principal ou sair do programa?");
-        printf("\n[1 - Menu | 0 - Sair]\n");
         scanf(" %c", &resultado);
-        switch(resultado)
-        {
-            case '0' :
-            case '1' :
-                return resultado;
-            default:
-                printf("\nInsira algo válido.");
-                break;
+        limparBuffer();
+        
+        if(resultado == '0' || resultado == '1'){
+            return resultado;
         }
-    }while(subMenu);
+        printf("\nOpcao invalida! Digite 1 ou 0: ");
+    }while(1);
 }
 
 int main() {
-
-    //Temporarios para a criação da fila de decolagens
-    char tempDestino[40];
-    char tempHorario[10];
-    char tempID[10];
-    char tempCapacidade[10];
-    char tempModelo[50];
-    //================================================
-
-    char opcaoSubmenu;
-    char opcao;
-    char destino[40];
-    bool exit = false;
+    // Variaveis temporarias para entrada de dados
+    char tempDestino[40], tempHorario[10], tempID[10];
+    char tempCapacidade[10], tempModelo[50];
+    
+    // Estruturas de dados principais
     Lista *listaDestinos = abrirDestinos();
     Fila *filaDecolagem = abrirDecolagens();
     Pilha *pilhaHistorico = abrirHistorico();
 
-    // Verifica se a lista foi criada corretamente
-    if(listaDestinos == NULL)
-    {
-        printf("Erro ao inicializar lista de destinos!\n");
+    // Verificacao inicial das estruturas
+    if(!listaDestinos || !filaDecolagem || !pilhaHistorico){
+        printf("\nERRO: Falha na inicializacao do sistema!");
         return 1;
     }
-
-    if(filaDecolagem == NULL)
-    {
-        printf("Erro ao inicializar a fila de decolagens!\n");
-        return 1;
-    }
-
-    if(pilhaHistorico == NULL)
-    {
-        printf("Erro ao inicializar histórico!\n");
-        return 1;
-    }
-
 
     ordenarDecolagens(filaDecolagem);
-
+    bool sair = false;
+    
     do{
-        system("cls");
-        opcao = menu();
-        
-        switch(opcao) {
-            case '1':
-                printf("\nCadastro de foguetes selecionado\n");
-                bool cadastrofoguete = false;
 
-                do
-                {
-                    printf("--- Modelo: ");
+        system("cls");
+        char opcao = menu();
+        
+        switch(opcao){
+            case '1': // Cadastro de novo foguete
+            {
+                system("cls");
+                cabecalho("CADASTRO DE FOGUETE");
+                bool dadosValidos = false;
+                
+                // Validacao do modelo e capacidade
+                do{
+                    printf("\nModelo do foguete: ");
                     fgets(tempModelo, sizeof(tempModelo), stdin);
                     limpar_str(tempModelo);
 
-                    printf("\n--- Quantidade de pessoas: ");
+                    printf("Capacidade (passageiros): ");
                     fgets(tempCapacidade, sizeof(tempCapacidade), stdin);
                     limpar_str(tempCapacidade);
 
-                    switch(verificarModelo(tempModelo, tempCapacidade))
-                    {
+                    switch(verificarModelo(tempModelo, tempCapacidade)){
                         case '1':
-                            printf("\nCapacidade excedida e/ou inválida.");
-                            printf("\nInsira novamente\n");
-                            system("pause");
-                            continue;
-
+                            printf("\nERRO: Capacidade invalida!");
+                            break;
                         case '2':
-                            printf("\nModelo não encontrado");
-                            printf("\nInsira novamente\n");
-                            system("pause");
-                            continue;
-
+                            printf("\nERRO: Modelo nao registrado!");
+                            break;
                         case '0':
-                            cadastrofoguete = true;
+                            dadosValidos = true;
                             break;
                     }
-                } while (!cadastrofoguete);
-                
-                
+                }while(!dadosValidos);
 
-                printf("\n--- Horario formatação [00:00]: ");
-                fgets(tempHorario, sizeof(tempHorario), stdin); 
+                // Coleta dos demais dados
+                printf("\nHorario (formato HH:MM): ");
+                fgets(tempHorario, sizeof(tempHorario), stdin);
                 limpar_str(tempHorario);
 
-                printf("\n--- Id: ");
+                printf("ID unico do voo: ");
                 fgets(tempID, sizeof(tempID), stdin);
                 limpar_str(tempID);
 
-                do
-                {
-                    printf("\n--- Destino: ");
+                // Validacao do destino
+                do{
+                    printf("\nDestino: ");
                     fgets(tempDestino, sizeof(tempDestino), stdin);
                     limpar_str(tempDestino);
+                }while(verificarDestino(listaDestinos, tempDestino) == 0);
 
-                    if(verificarDestino(listaDestinos, tempDestino) == 0){
-                        printf("Insira novamente\n");
-                        system("pause");
-                        continue;
-                    }
-                    break;
-                } while (1);
-
-                adicionarDecolagem(filaDecolagem, tempHorario, tempModelo, tempCapacidade, tempID, tempDestino);
-                printf("\nDecolagem adicionada!");
+                adicionarDecolagem(filaDecolagem, tempHorario, tempModelo, 
+                                 tempCapacidade, tempID, tempDestino);
+                printf("\nSUCESSO: Foguete cadastrado!");
                 ordenarDecolagens(filaDecolagem);
-                printf("\n ============================== ");
-                opcaoSubmenu = retornarMenu();
-                if(opcaoSubmenu == '1')
-                {
-                    printf("\n- - - Retornando - - -");
-                    sleep(1);
-                }else
-                {
-                    printf("\n- - - Saindo - - -");
-                    exit = true;
-                }
                 break;
+            }
 
-            case '2':
+            case '2': // Listagem da fila
+                system("cls");
+                cabecalho("FILA DE DECOLAGENS");
                 if(!filaVazia(filaDecolagem)){
-                    system("cls");
-                    printf("\nLista de foguetes selecionado\n");
                     imprimirDecolagem(filaDecolagem);
-                    printf("\n ============================== ");
-                }else
-                {
-                    printf("\nFila de foguetes vazia.");
-                }
-                opcaoSubmenu = retornarMenu();
-                if(opcaoSubmenu == '1')
-                {
-                    printf("\n- - - Retornando - - -");
-                    sleep(1);
-                }else
-                {
-                    printf("\n- - - Saindo - - -");
-                    exit = true;
+                }else{
+                    printf("\nAVISO: Fila de decolagens vazia");
                 }
                 break;
 
-            case '3':
+            case '3': // Remocao por ID
+                system("cls");
+                cabecalho("REMOCAO DE FOGUETE");
                 if(!filaVazia(filaDecolagem)){
-                    printf("\nRemover foguete selecionado\n");
-                    printf("Insira o ID para a remoção: ");
+                    printf("\nInforme o ID para remocao: ");
                     fgets(tempID, sizeof(tempID), stdin);
                     limpar_str(tempID);
                     removerDecolagem(filaDecolagem, tempID);
-                }
-                else
-                {
-                    printf("\nFila de foguetes vazia.");
-                }
-                printf("\n ============================== ");
-                opcaoSubmenu = retornarMenu();
-                if(opcaoSubmenu == '1')
-                {
-                    printf("\n- - - Retornando - - -");
-                    sleep(1);
-                }else
-                {
-                    printf("\n- - - Saindo - - -");
-                    exit = true;
+                }else{
+                    printf("\nAVISO: Fila de decolagens vazia");
                 }
                 break;
 
-            case '4':
-                if(!listaVazia(listaDestinos)){
-                    system("cls");
-                    printf("\n=== Destinos Disponíveis ===\n");
-                    imprimirDestinos(listaDestinos);
-                    printf("\n ============================== ");
-                }
-                else
-                {
-                    printf("\nA lista de destinos está vazia.");
-                }
-                opcaoSubmenu = retornarMenu();
-                if(opcaoSubmenu == '1')
-                {
-                    printf("\n- - - Retornando - - -");
-                    sleep(1);
-                }else
-                {
-                    printf("\n- - - Saindo - - -");
-                    exit = true;
-                }
-                break;
-
-            case '5': 
-                if(!listaVazia(listaDestinos)){
-                    printf("\nDigite o destino a remover: ");
-                    fgets(destino, sizeof(destino), stdin);
-                    limpar_str(destino);
-                    removerDestino(listaDestinos, destino);
-                }
-                else
-                {
-                    printf("\nLista de destino está vazia.");
-                }
-                printf("\n ============================== ");
-                opcaoSubmenu = retornarMenu();
-                if(opcaoSubmenu == '1')
-                {
-                    printf("\n- - - Retornando - - -");
-                    sleep(1);
-                }else
-                {
-                    printf("\n- - - Saindo - - -");
-                    exit = true;
-                }
-                break;
-
-            case '6':
+            case '4': // Lista de destinos
                 system("cls");
-                printf("\nDecolagem selecionada\n");
-                if(!filaVazia(filaDecolagem)){
-                    adicionarHistorico(pilhaHistorico,filaDecolagem->inicio->ID, filaDecolagem->inicio->horario, filaDecolagem->inicio->localizacao, filaDecolagem->inicio->foguete.modelo, filaDecolagem->inicio->foguete.capacidade);
-                    decolagem(filaDecolagem);
-                } else
-                {
-                    printf("\nFila de decolagens vazia!\n");
-                }
-                printf("\n ============================== ");
-                opcaoSubmenu = retornarMenu();
-                if(opcaoSubmenu == '1')
-                {
-                    printf("\n- - - Retornando - - -");
-                    sleep(1);
-                }else
-                {
-                    printf("\n- - - Saindo - - -");
-                    exit = true;
+                cabecalho("DESTINOS DISPONIVEIS");
+                if(!listaVazia(listaDestinos)){
+                    imprimirDestinos(listaDestinos);
+                }else{
+                    printf("\nAVISO: Nenhum destino cadastrado");
                 }
                 break;
 
-            case '7':
-                if(!historicoVazio(pilhaHistorico))
-                {
-                    system("cls");
-                    printf("\nHistórico de decolagens\n");
+            case '5': // Remocao de destino
+                system("cls");
+                cabecalho("REMOCAO DE DESTINO");
+                if(!listaVazia(listaDestinos)){
+                    printf("\nDestino a remover: ");
+                    fgets(tempDestino, sizeof(tempDestino), stdin);
+                    limpar_str(tempDestino);
+                    removerDestino(listaDestinos, tempDestino);
+                }else{
+                    printf("\nAVISO: Lista de destinos vazia");
+                }
+                break;
+
+            case '6': // Executar decolagem
+                system("cls");
+                cabecalho("EXECUTAR DECOLAGEM");
+                if(!filaVazia(filaDecolagem)){
+                    adicionarHistorico(pilhaHistorico, filaDecolagem->inicio->ID, 
+                                     filaDecolagem->inicio->horario, 
+                                     filaDecolagem->inicio->localizacao, 
+                                     filaDecolagem->inicio->foguete.modelo, 
+                                     filaDecolagem->inicio->foguete.capacidade);
+                    decolagem(filaDecolagem);
+                }else{
+                    printf("\nAVISO: Nenhum foguete na fila");
+                }
+                break;
+
+            case '7': // Consulta historico
+                system("cls");
+                cabecalho("HISTORICO DE DECOLAGENS");
+                if(!historicoVazio(pilhaHistorico)){
                     imprimirHistorico(pilhaHistorico);
                 }
-                else
-                {
-                    printf("\nHistórico vazio!");
-                }                
-                printf("\n ============================== ");
-                opcaoSubmenu = retornarMenu();
-                if(opcaoSubmenu == '1')
-                {
-                    printf("\n- - - Retornando - - -");
-                    sleep(1);
-                }else
-                {
-                    printf("\n- - - Saindo - - -");
-                    exit = true;
-                }              
-                break;
-
-            case '8': 
-                char novoDestino[40];
-                printf("\nNovo destino: ");
-                fgets(novoDestino, sizeof(novoDestino), stdin);
-                limpar_str(novoDestino);
-                adicionarDestino(listaDestinos, novoDestino);
-                break;
-            case '9':
-                if(!historicoVazio(pilhaHistorico))
-                {
-                    removerHistorico(pilhaHistorico);
-                    printf("- Histórico apagado com sucesso!");
-                }else
-                {
-                    printf("\nHistórico vazio.");
+                else{
+                    printf("\nAVISO: Historico vazio");
                 }
-                printf("\n ============================== ");
-                opcaoSubmenu = retornarMenu();
-                if(opcaoSubmenu == '1')
-                {
-                    printf("\n- - - Retornando - - -");
-                    sleep(1);
-                }else
-                {
-                    printf("\n- - - Saindo - - -");
-                    exit = true;
-                }                
                 break;
 
-            case '0':
-                printf("\nEncerrando sistema...\n");
-                sleep(1);
-                exit = true;
+            case '8': // Adicionar destino
+                system("cls");
+                cabecalho("NOVO DESTINO");
+                printf("\nNovo destino: ");
+                fgets(tempDestino, sizeof(tempDestino), stdin);
+                limpar_str(tempDestino);
+                adicionarDestino(listaDestinos, tempDestino);
+                printf("\nSUCESSO: Destino adicionado!");
+                break;
+
+            case '9': // Limpar historico
+                system("cls");
+                cabecalho("LIMPEZA DE HISTORICO");
+                if(!historicoVazio(pilhaHistorico)){
+                    removerHistorico(pilhaHistorico);
+                    printf("\nSUCESSO: Historico apagado!");
+                }else{
+                    printf("\nAVISO: Historico vazio");
+                }
+                break;
+
+            case '0': // Encerrar sistema
+                cabecalho("ENCERRAMENTO DO SISTEMA");
+                printf("\nSalvando dados...");
+                sleep(2);
+                sair = true;
                 break;
 
             default:
-                printf("\nOpção inválida! Tente novamente.\n");
+                printf("\nERRO: Opcao invalida!");
                 sleep(1);
                 break;
         }
-    }while(!exit);
 
-    //Está para fora pra garantir que SEMPRE vai fechar as aloações dinamicas.
+        // Gerenciamento de retorno ao menu
+        if(!sair && opcao != '0'){
+            printf("\n%s", LINHA);
+            if(retornarMenu() == '0') sair = true;
+        }
+
+    } while(!sair);
+
+    // Liberacao de recursos
     fecharLista(listaDestinos);
     fecharFila(filaDecolagem);
     fecharHistorico(pilhaHistorico);
+    
+    printf("\nSistema encerrado com sucesso!\n");
     return 0;
 }
