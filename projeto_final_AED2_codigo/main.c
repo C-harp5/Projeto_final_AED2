@@ -56,7 +56,6 @@ char retornarMenu()
                 break;
         }
     }while(subMenu);
-    return '-';
 }
 
 int main() {
