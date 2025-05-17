@@ -18,7 +18,8 @@ void limpar_str(char str[]){
 char menu() {
     char opcao;
     
-    printf("\n=== Menu de Controle ===");
+    printf("\n=-=-= Menu de Controle =-=-=");
+    
     printf("\n1 - Cadastro de foguetes para decolagem");
     printf("\n2 - Fila de foguetes para decolagem");
     printf("\n3 - Remover foguete da fila de decolagens");
@@ -349,6 +350,7 @@ int main() {
 
             case '0':
                 printf("\nEncerrando sistema...\n");
+                sleep(1);
                 exit = true;
                 break;
 

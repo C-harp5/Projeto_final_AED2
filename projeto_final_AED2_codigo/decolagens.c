@@ -405,6 +405,5 @@ void fecharFila(Fila *fila) {
         free(atual);
         atual = proximo;
     }
-    fila->inicio = NULL;
-    fila->fim = NULL;
+    free(fila);
 }
