@@ -19,11 +19,10 @@
 ---
 
 ## 📌 Índice
-- [Sobre](#sobre)
-- [Funcionalidades](#funcionalidades)
-- [Contribuição](#contribuição)
-- [Estrutura](#estrutura)
-- [Autores](#autor)
+- [Sobre](#-sobre)
+- [Funcionalidades](#-funcionalidades)
+- [Estrutura do Projeto](#-estrutura)
+- [Autores](#-autores)
 
 ---
 
